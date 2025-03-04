@@ -52,12 +52,12 @@ function calculateWageUntilLimit() {
   let totalHours = 0;
   let totalDays = 0;
   let totalWageUntil = 0;
-  let dailyWages = [];
+  let dailyWages = new Map();
 
   while (totalHours < MAX_HOURS && totalDays < MAX_DAYS) {
     const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
     const dailyWage = dailyHours * WAGE_PER_HOUR;
-    dailyWages.push(dailyWage);
+    dailyWages.set(totalDays + 1, dailyWage);
     totalHours += dailyHours;
     totalWageUntil += dailyWage;
     totalDays++;
