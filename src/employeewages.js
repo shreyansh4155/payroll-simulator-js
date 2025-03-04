@@ -3,13 +3,20 @@ const FULL_TIME_HOURS = 8,
   WAGE_PER_HOUR = 20;
 
 function getWorkHours(empType) {
-  return empType === 1 ? PART_TIME_HOURS : empType === 2 ? FULL_TIME_HOURS : 0;
+  switch (empType) {
+    case 1:
+      return PART_TIME_HOURS;
+    case 2:
+      return FULL_TIME_HOURS;
+    default:
+      return 0;
+  }
 }
 
 function calculateWage() {
   const IS_PRESENT = Math.random() < 0.5; // 50% probability
-  let empType = Math.floor(Math.random() * 3);
-  let workHours = IS_PRESENT ? getWorkHours(empType) : 0;
+  const empType = Math.floor(Math.random() * 3);
+  const workHours = IS_PRESENT ? getWorkHours(empType) : 0;
 
   if (IS_PRESENT) {
     console.log("Employee is Present");
@@ -25,6 +32,15 @@ function calculateWage() {
 
   console.log(`Employee worked ${workHours} hours`);
 }
+function calculateTotalWage(days) {
+  let totalWage = 0;
+  for (let day = 1; day <= days; day++) {
+    const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
+    totalWage += dailyHours * WAGE_PER_HOUR;
+  }
+  return totalWage;
+}
 
-// Call the function to calculate wage
 calculateWage();
+const totalWage = calculateTotalWage(20);
+console.log(`Total Wage for 20 Days: $${totalWage}`);
