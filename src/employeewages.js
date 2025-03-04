@@ -1,6 +1,6 @@
-const FULL_TIME_HOURS = 8,
-const PART_TIME_HOURS = 4,
-const  WAGE_PER_HOUR = 20;
+const FULL_TIME_HOURS = 8;
+const PART_TIME_HOURS = 4;
+const WAGE_PER_HOUR = 20;
 const MAX_HOURS = 160;
 const MAX_DAYS = 20;
 
@@ -37,8 +37,16 @@ function calculateWage() {
 function calculateTotalWage(days) {
   let totalWage = 0;
   for (let day = 1; day <= days; day++) {
-    const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
-    totalWage += dailyHours * WAGE_PER_HOUR;
+    let totalWage = 0;
+    let dailyWages = [];
+    for (let day = 1; day <= days; day++) {
+      const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
+      const dailyWage = dailyHours * WAGE_PER_HOUR;
+      dailyWages.push(dailyWage);
+      totalWage += dailyWage;
+    }
+    console.log(`Daily Wages: ${dailyWages}`);
+    return totalWage;
   }
   return totalWage;
 }
@@ -46,15 +54,21 @@ function calculateWageUntilLimit() {
   let totalHours = 0;
   let totalDays = 0;
   let totalWageUntil = 0;
+  let dailyWages = [];
 
   while (totalHours < MAX_HOURS && totalDays < MAX_DAYS) {
-      const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
-      totalHours += dailyHours;
-      totalWageUntil += dailyHours * WAGE_PER_HOUR;
-      totalDays++;
+    const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
+    const dailyWage = dailyHours * WAGE_PER_HOUR;
+    dailyWages.push(dailyWage);
+    totalHours += dailyHours;
+    totalWageUntil += dailyWage;
+    totalDays++;
   }
 
-  console.log(`Total Days: ${totalDays}, Total Hours: ${totalHours}, Total Wage: $${totalWageUntil}`);
+  console.log(`Daily Wages: ${dailyWages}`);
+  console.log(
+    `Total Days: ${totalDays}, Total Hours: ${totalHours}, Total Wage: $${totalWageUntil}`
+  );
 }
 
 calculateWage();
