@@ -1,6 +1,8 @@
 const FULL_TIME_HOURS = 8,
-  PART_TIME_HOURS = 4,
-  WAGE_PER_HOUR = 20;
+const PART_TIME_HOURS = 4,
+const  WAGE_PER_HOUR = 20;
+const MAX_HOURS = 160;
+const MAX_DAYS = 20;
 
 function getWorkHours(empType) {
   switch (empType) {
@@ -40,7 +42,22 @@ function calculateTotalWage(days) {
   }
   return totalWage;
 }
+function calculateWageUntilLimit() {
+  let totalHours = 0;
+  let totalDays = 0;
+  let totalWageUntil = 0;
+
+  while (totalHours < MAX_HOURS && totalDays < MAX_DAYS) {
+      const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
+      totalHours += dailyHours;
+      totalWageUntil += dailyHours * WAGE_PER_HOUR;
+      totalDays++;
+  }
+
+  console.log(`Total Days: ${totalDays}, Total Hours: ${totalHours}, Total Wage: $${totalWageUntil}`);
+}
 
 calculateWage();
 const totalWage = calculateTotalWage(20);
 console.log(`Total Wage for 20 Days: $${totalWage}`);
+calculateWageUntilLimit();
