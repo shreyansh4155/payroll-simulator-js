@@ -43,10 +43,10 @@ function calculateTotalWage(days) {
   for (let day = 1; day <= days; day++) {
     const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
     const dailyWage = dailyHours * WAGE_PER_HOUR;
-    dailyWages.push(dailyWage);
+    dailyWages.push({ day, hoursWorked: dailyHours, wageEarned: dailyWage });
     totalWage += dailyWage;
   }
-  console.log(`Daily Wages: ${dailyWages}`);
+  console.log(`Daily Wages: ${JSON.stringify(dailyWages)}`);
   return totalWage;
 }
 
@@ -54,77 +54,81 @@ function calculateWageUntilLimit() {
   let totalHours = 0;
   let totalDays = 0;
   let totalWageUntil = 0;
-  let dailyWages = new Map();
+  let dailyWages = [];
   let dailyHoursMap = new Map();
 
   while (totalHours < MAX_HOURS && totalDays < MAX_DAYS) {
     const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
     const dailyWage = dailyHours * WAGE_PER_HOUR;
-    dailyWages.set(totalDays + 1, dailyWage);
+    dailyWages.push({
+      day: totalDays + 1,
+      hoursWorked: dailyHours,
+      wageEarned: dailyWage,
+    });
     dailyHoursMap.set(totalDays + 1, dailyHours);
     totalHours += dailyHours;
     totalWageUntil += dailyWage;
     totalDays++;
   }
 
-  console.log(`Daily Wages: ${Array.from(dailyWages.values())}`);
+  console.log(`Daily Wages: ${JSON.stringify(dailyWages)}`);
   console.log(
     `Total Days: ${totalDays}, Total Hours: ${totalHours}, Total Wage: $${totalWageUntil}`
   );
 
   // a. Calc total Wage using Array forEach or reduce method
-  const totalWage = Array.from(dailyWages.values()).reduce(
-    (total, wage) => total + wage,
+  const totalWage = dailyWages.reduce(
+    (total, { wageEarned }) => total + wageEarned,
     0
   );
   console.log(`Total Wage using reduce: $${totalWage}`);
 
   // b. Show the Day along with Daily Wage using Array map helper function
-  const dayWithWages = Array.from(dailyWages.entries()).map(
-    ([day, wage]) => `Day ${day}: $${wage}`
+  const dayWithWages = dailyWages.map(
+    ({ day, wageEarned }) => `Day ${day}: $${wageEarned}`
   );
   console.log(`Day with Wages: ${dayWithWages}`);
 
   // c. Show Days when Full time wage of 160 were earned using filter function
-  const fullTimeWageDays = Array.from(dailyWages.entries())
-    .filter(([day, wage]) => wage === FULL_TIME_WAGE)
-    .map(([day, wage]) => day);
+  const fullTimeWageDays = dailyWages
+    .filter(({ wageEarned }) => wageEarned === FULL_TIME_WAGE)
+    .map(({ day }) => day);
   console.log(`Days with Full Time Wage: ${fullTimeWageDays.length}`);
 
   // d. Find the first occurrence when Full Time Wage was earned using find function
-  const firstFullTimeWageDay = Array.from(dailyWages.entries()).find(
-    ([day, wage]) => wage === FULL_TIME_WAGE
+  const firstFullTimeWageDay = dailyWages.find(
+    ({ wageEarned }) => wageEarned === FULL_TIME_WAGE
   );
   console.log(
     `First occurrence of Full Time Wage: Day ${
-      firstFullTimeWageDay ? firstFullTimeWageDay[0] : "None"
+      firstFullTimeWageDay ? firstFullTimeWageDay.day : "None"
     }`
   );
 
   // e. Check if Every Element of Full Time Wage is truly holding Full time wage
-  const isEveryFullTimeWage = Array.from(dailyWages.values()).every(
-    (wage) => wage === FULL_TIME_WAGE
+  const isEveryFullTimeWage = dailyWages.every(
+    ({ wageEarned }) => wageEarned === FULL_TIME_WAGE
   );
   console.log(`Is every element a Full Time Wage: ${isEveryFullTimeWage}`);
 
   // f. Check if there is any Part Time Wage
-  const isAnyPartTimeWage = Array.from(dailyWages.values()).some(
-    (wage) => wage === PART_TIME_WAGE
+  const isAnyPartTimeWage = dailyWages.some(
+    ({ wageEarned }) => wageEarned === PART_TIME_WAGE
   );
   console.log(`Is there any Part Time Wage: ${isAnyPartTimeWage}`);
 
   // g. Find the number of days the Employee Worked
-  const daysWorked = Array.from(dailyWages.values()).filter(
-    (wage) => wage > 0
+  const daysWorked = dailyWages.filter(
+    ({ wageEarned }) => wageEarned > 0
   ).length;
   console.log(`Number of days the Employee Worked: ${daysWorked}`);
 
   // Additional functionality using arrow functions
   // a. Calc total Wage and total hours worked
-  const totalWagesAndHours = Array.from(dailyHoursMap.entries()).reduce(
-    (acc, [day, hours]) => {
-      acc.totalWage += hours * WAGE_PER_HOUR;
-      acc.totalHours += hours;
+  const totalWagesAndHours = dailyWages.reduce(
+    (acc, { hoursWorked, wageEarned }) => {
+      acc.totalWage += wageEarned;
+      acc.totalHours += hoursWorked;
       return acc;
     },
     { totalWage: 0, totalHours: 0 }
@@ -134,15 +138,15 @@ function calculateWageUntilLimit() {
   );
 
   // b. Show the full working days, part working days and no working days
-  const fullWorkingDays = Array.from(dailyHoursMap.entries())
-    .filter(([day, hours]) => hours === FULL_TIME_HOURS)
-    .map(([day]) => day);
-  const partWorkingDays = Array.from(dailyHoursMap.entries())
-    .filter(([day, hours]) => hours === PART_TIME_HOURS)
-    .map(([day]) => day);
-  const noWorkingDays = Array.from(dailyHoursMap.entries())
-    .filter(([day, hours]) => hours === 0)
-    .map(([day]) => day);
+  const fullWorkingDays = dailyWages
+    .filter(({ hoursWorked }) => hoursWorked === FULL_TIME_HOURS)
+    .map(({ day }) => day);
+  const partWorkingDays = dailyWages
+    .filter(({ hoursWorked }) => hoursWorked === PART_TIME_HOURS)
+    .map(({ day }) => day);
+  const noWorkingDays = dailyWages
+    .filter(({ hoursWorked }) => hoursWorked === 0)
+    .map(({ day }) => day);
 
   console.log(`Full Working Days: ${fullWorkingDays}`);
   console.log(`Part Working Days: ${partWorkingDays}`);
