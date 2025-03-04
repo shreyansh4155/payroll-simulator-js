@@ -14,15 +14,39 @@ class EmployeePayrollData {
     this.gender = gender;
     this.startDate = new Date(startDate);
 
-    // Validate name
+    // Validate employee data
     try {
+      // Validate name
       const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
       if (!namePattern.test(this.name)) {
         throw new Error(
           "Name must start with a capital letter and have at least 3 characters."
         );
       }
-      console.log("Name validation passed.");
+
+      // Validate ID
+      if (this.id <= 0 || !Number.isInteger(this.id)) {
+        throw new Error("ID must be a non-zero positive integer.");
+      }
+
+      // Validate salary
+      if (this.salary <= 0 || isNaN(this.salary)) {
+        throw new Error("Salary must be a non-zero positive number.");
+      }
+
+      // Validate gender
+      const genderPattern = /^[MF]$/;
+      if (!genderPattern.test(this.gender)) {
+        throw new Error("Gender must be 'M' or 'F'.");
+      }
+
+      // Validate start date
+      const currentDate = new Date();
+      if (this.startDate > currentDate) {
+        throw new Error("Start date cannot be a future date.");
+      }
+
+      console.log("Employee data validation passed.");
     } catch (error) {
       console.error(error.message);
     }
@@ -193,7 +217,7 @@ const employee1 = new EmployeePayrollData(
   1,
   "John Doe",
   50000,
-  "Male",
+  "M",
   "2023-01-01"
 );
 console.log(employee1.toString());
